@@ -2606,12 +2606,24 @@ function getCountryCode() {
 
 	const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-	if (timezone === "" || !timezone) {
+	if (!timezone) {
 		return null;
 	}
 
-	const cCode = timezones[timezone]?.c?.[0];
-	return cCode;
+	const detectedTZ = timezones[timezone];
+
+	if (Object.hasOwn(detectedTZ, 'c')) {
+		return detectedTZ.c[0];
+	}
+
+	if (Object.hasOwn(detectedTZ, 'a')) {
+		const aliasCountry = timezones[detectedTZ.a];
+		if (aliasCountry && Object.hasOwn(aliasCountry, 'c')) {
+			return aliasCountry.c[0];
+		}
+	}
+
+	return null;
 }
 
 export default getCountryCode;
