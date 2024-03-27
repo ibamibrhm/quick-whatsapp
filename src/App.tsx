@@ -49,7 +49,7 @@ function App() {
       return;
     }
 
-    window.open(`https://wa.me/${selectedCountry.dial_code.slice(1)}${phoneNumber}`, '_blank')?.focus();
+    window.location.assign(`https://wa.me/${selectedCountry.dial_code.slice(1)}${phoneNumber}`)
   };
 
   const handleChangePhoneNumber = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
