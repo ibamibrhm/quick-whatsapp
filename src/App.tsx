@@ -100,7 +100,7 @@ function App() {
             <TextField
               required
               autoFocus
-              inputMode="numeric"
+              inputProps={{ inputMode: 'numeric' }}
               label="Phone Number"
               id="phone-number-input"
               error={validate.error}
