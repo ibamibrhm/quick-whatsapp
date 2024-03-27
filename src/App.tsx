@@ -2,6 +2,7 @@ import { useState, ChangeEvent } from 'react';
 import { Button, Paper, Container, Typography, Autocomplete, TextField, InputAdornment } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import countries from './db/countries.json';
+import getCountryCode from './utils/getCountryCode';
 
 interface ICountry {
   name: string;
@@ -17,9 +18,28 @@ const validateInitialState = {
 
 const KEY_LOCAL_STORAGE = 'selected-country';
 
-function App() {
+function getInitialCountry() {
   const memorySelectedCountry = window.localStorage.getItem(KEY_LOCAL_STORAGE);
-  const [selectedCountry, setSelectedCountry] = useState<ICountry>(memorySelectedCountry ? JSON.parse(memorySelectedCountry) : countries[101]);
+
+  if (memorySelectedCountry) {
+    return JSON.parse(memorySelectedCountry);
+  }
+
+  const defaultCountry = countries[101];
+
+  const cCode = getCountryCode();
+
+  if (!cCode) {
+    return defaultCountry;
+  }
+
+  const matchCountry = countries.find(country => country.code === cCode);
+
+  return matchCountry || defaultCountry;
+}
+
+function App() {
+  const [selectedCountry, setSelectedCountry] = useState<ICountry>(getInitialCountry());
   const [phoneNumber, setPhoneNumber] = useState('');
   const [validate, setValidate] = useState(validateInitialState);
 
