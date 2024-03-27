@@ -1,5 +1,5 @@
-import { useState, ChangeEvent } from 'react';
-import { Button, Paper, Container, Typography, Autocomplete, TextField, InputAdornment } from '@mui/material';
+import { useState, ChangeEvent, useEffect } from 'react';
+import { Button, Paper, Container, Typography, Autocomplete, TextField, InputAdornment, Snackbar, Alert } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import countries from './db/countries.json';
 import getCountryCode from './utils/getCountryCode';
@@ -9,6 +9,11 @@ interface ICountry {
   flag: string;
   code: string;
   dial_code: string;
+}
+
+interface AppProps {
+  appUpdatePending: boolean;
+  updateAction: () => void;
 }
 
 const validateInitialState = {
@@ -38,10 +43,17 @@ function getInitialCountry() {
   return matchCountry || defaultCountry;
 }
 
-function App() {
+function App(props: AppProps) {
+  const { appUpdatePending, updateAction } = props;
+  const [showUpdateBtn, setShowUpdateBtn] = useState(appUpdatePending);
+
   const [selectedCountry, setSelectedCountry] = useState<ICountry>(getInitialCountry());
   const [phoneNumber, setPhoneNumber] = useState('');
   const [validate, setValidate] = useState(validateInitialState);
+
+  useEffect(() => {
+    setShowUpdateBtn(appUpdatePending);
+  }, [appUpdatePending]);
 
   const handleStartChat = () => {
     if (!phoneNumber.length) {
@@ -49,7 +61,7 @@ function App() {
       return;
     }
 
-    window.location.assign(`https://wa.me/${selectedCountry.dial_code.slice(1)}${phoneNumber}`)
+    window.location.assign(`https://wa.me/${selectedCountry.dial_code.slice(1)}${phoneNumber}`);
   };
 
   const handleChangePhoneNumber = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -73,6 +85,21 @@ function App() {
 
   return (
     <Container>
+      <Snackbar
+        open={showUpdateBtn}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center'  }}
+      >
+        <Alert
+          severity="info"
+          variant="outlined"
+          action={
+            <Button size="small" color="inherit" onClick={updateAction}>Update</Button>
+          }
+        >
+          New Version Available
+        </Alert>
+      </Snackbar>
+
       <Paper sx={{ mt: 10, mb: 1, p: 5 }} elevation={24}>
         <Grid container justifyContent="center" spacing={2}>
           <Grid xs={12}>
