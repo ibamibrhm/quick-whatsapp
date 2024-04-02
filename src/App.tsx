@@ -133,6 +133,7 @@ function App(props: AppProps) {
               error={validate.error}
               value={phoneNumber}
               onChange={handleChangePhoneNumber}
+              autoComplete="off"
               onKeyUp={(e) => {
                 if (e.key === 'Enter') {
                   handleStartChat();
